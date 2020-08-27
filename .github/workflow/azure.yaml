@@ -1,0 +1,47 @@
+on: [push,pull_request]
+
+env:
+  AZURE_WEBAPP_NAME: learnin5mins   # set this to your application's name
+  AZURE_GROUP_NAME: learnin5mins
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    # checkout the repo
+    - uses: actions/checkout@master
+    
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version:  3.0.101
+
+
+    # dotnet build and publish
+    - name: Build with dotnet
+      run: dotnet build ./learnin5mins --configuration Release
+    - name: dotnet publish 
+      run: |
+        dotnet publish ./learnin5mins  -c Release -o myapp 
+
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZ_APP_SECRET }}
+
+    - run: |
+        az group create -n ${{ env.AZURE_GROUP_NAME }} -l eastus 
+        az group deployment create -n ghaction -g ${{ env.AZURE_GROUP_NAME }} --template-file deployment/azuredepoy.json
+
+
+    # deploy web app using Azure credentials
+    - name: 'Azure webapp deploy'
+      uses: azure/webapps-deploy@v1
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: './myapp' 
+
+    # Azure logout 
+    - name: logout
+      run: |
+        az logout

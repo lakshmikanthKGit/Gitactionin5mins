@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "learnin5minsplan",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "tags": {
+                "displayName": "learnin5minsplan"
+            },
+            "properties": {
+                "name": "learnin5minsplan"
+            }
+        },
+        {
+            "name": "learnin5minapp",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/learnin5minsplan')]": "Resource",
+                "displayName": "learnin5minapp"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', 'learnin5minsplan')]"
+            ],
+            "properties": {
+                "name": "learnin5minapp",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', 'learnin5minsplan')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

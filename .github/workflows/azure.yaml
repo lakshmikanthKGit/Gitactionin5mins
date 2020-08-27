@@ -1,7 +1,7 @@
 on: [push,pull_request]
 
 env:
-  AZURE_WEBAPP_NAME: learnin5minsapp   # set this to your application's name
+  AZURE_WEBAPP_NAME: learnin5minapp   # set this to your application's name
   AZURE_GROUP_NAME: learnin5mins
 
 jobs:
